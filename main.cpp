@@ -8,7 +8,7 @@
 int main()
 {
     std::srand(std::time(0));
-    TicTacToe xo;
+    XO::TicTacToe xo;
     xo.runGame();
     return 0;
 }
