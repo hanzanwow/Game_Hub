@@ -5,8 +5,7 @@
 #include <algorithm>
 #include <array>
 
-XOBot::XOBot(TicTacToe *API) : game(API), PLAYER(API->getPlayerIcon()), AI(API->getComputerIcon()), hard(API, AI, PLAYER) {}
-void XOBot::Move()
+void XO::XOBot::Move()
 {
     switch (game->getMode())
     {
@@ -21,7 +20,7 @@ void XOBot::Move()
         break;
     }
 }
-void XOBot::EasyMode()
+void XO::XOBot::EasyMode()
 {
     auto number = 0;
     while (true)
@@ -31,7 +30,7 @@ void XOBot::EasyMode()
             break;
     }
 }
-void XOBot::MediumMode()
+void XO::XOBot::MediumMode()
 {
     const std::array<std::array<int, 3>, 8> wins_stage =
         {{
@@ -107,15 +106,16 @@ void XOBot::MediumMode()
     EasyMode();
 }
 
-XOBot::HardMode::HardMode(TicTacToe *API, char ai, char human) : game(API), AI(ai), PLAYER(human) {}
-
-bool XOBot::HardMode::isWinner(const std::array<char, 9> &board, const char &player) const
+bool XO::XOBot::HardMode::isWinner(const std::array<char, 9> &board, const char &player) const
 {
     const std::array<std::array<int, 3>, 8> wins_stage =
         {{
             {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // Rows
-            {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // Cols
-            {0, 4, 8}, {2, 4, 6} // Diagonals
+            {0, 3, 6},
+            {1, 4, 7},
+            {2, 5, 8}, // Cols
+            {0, 4, 8},
+            {2, 4, 6} // Diagonals
         }};
 
     for (const auto &line : wins_stage)
@@ -124,7 +124,7 @@ bool XOBot::HardMode::isWinner(const std::array<char, 9> &board, const char &pla
     return false;
 }
 
-bool XOBot::HardMode::isBoardFull(const std::array<char, 9> &board) const
+bool XO::XOBot::HardMode::isBoardFull(const std::array<char, 9> &board) const
 {
     for (const auto &space : board)
         if (space == ' ')
@@ -135,7 +135,7 @@ bool XOBot::HardMode::isBoardFull(const std::array<char, 9> &board) const
 // The Minimax Recursive Function
 // isMaximizing = true  -> AI's turn (try to get highest score)
 // isMaximizing = false -> Player's turn (assume Player plays optimally to get lowest score)
-int XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
+int XO::XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
 {
     if (isWinner(board, AI))
         return 10;
@@ -151,9 +151,9 @@ int XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
         {
             if (board.at(i) == ' ')
             {
-                board.at(i) = AI; // Try to Make move
-                bestScore = std::max(bestScore, minimax(board, false));// Recurse
-                board.at(i) = ' '; // Undo
+                board.at(i) = AI;                                       // Try to Make move
+                bestScore = std::max(bestScore, minimax(board, false)); // Recurse
+                board.at(i) = ' ';                                      // Undo
             }
         }
         return bestScore;
@@ -173,7 +173,7 @@ int XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
         return bestScore;
     }
 }
-int XOBot::HardMode::findBestMove()
+int XO::XOBot::HardMode::findBestMove()
 {
     std::array<char, 9> TestBoard = game->getMap();
     auto bestScore = -1000;
@@ -205,7 +205,7 @@ int XOBot::HardMode::findBestMove()
 
     return move;
 }
-void XOBot::HardMode::Hard_Move()
+void XO::XOBot::HardMode::Hard_Move()
 {
     auto AI_Move = findBestMove();
     game->placeMove(AI_Move, game->getComputerIcon());

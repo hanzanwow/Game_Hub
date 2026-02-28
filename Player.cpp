@@ -3,9 +3,8 @@
 #include "Utils.h"
 #include <iostream>
 #include <limits>
-#include <vector>
 
-void player::Move()
+void XO::player::Move()
 {
     int number;
     while (true)
@@ -16,7 +15,7 @@ void player::Move()
         {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cerr << Color::RED << "Invalid input. Please enter a number." << Color::RESET << std::endl;
+            std::cerr << Utils::Color::RED << "Invalid input. Please enter a number." << Utils::Color::RESET << std::endl;
             continue;
         }
 
@@ -28,6 +27,6 @@ void player::Move()
         if (game->placeMove(number, game->getPlayerIcon()))
             break;
         else
-            std::cerr << Color::YELLOW << "Invalid move or spot taken." << Color::RESET << std::endl;
+            std::cerr << Utils::Color::YELLOW << "Invalid move or spot taken." << Utils::Color::RESET << std::endl;
     }
 }
