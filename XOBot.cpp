@@ -1,6 +1,7 @@
 #include "XOBot.h"
 #include "Utils.h"
 #include "TicTacToe.h"
+#include <print>
 #include <iostream>
 #include <algorithm>
 #include <array>
@@ -12,9 +13,11 @@ void XO::XOBot::Move()
     case Difficulty::Easy:
         EasyMode();
         break;
+
     case Difficulty::Medium:
         MediumMode();
         break;
+
     case Difficulty::Hard:
         hard.Hard_Move();
         break;
@@ -22,7 +25,7 @@ void XO::XOBot::Move()
 }
 void XO::XOBot::EasyMode()
 {
-    auto number = 0;
+    auto number = 0ull;
     while (true)
     {
         number = std::rand() % 9;
@@ -44,9 +47,9 @@ void XO::XOBot::MediumMode()
             {2, 4, 6}  // Diagonal 1
         }};
 
-    // Lambda function to find critical spot(win or block)
-    // Returns index of the spot, or -1 if none found.
-    auto findWinningSpot = [&](char targetIcon) -> int
+    //* Finds a winning or blocking move.
+    //* Returns the index of the critical position, or -1 if none found.
+    auto findWinningSpot = [&](char targetIcon) -> unsigned long long int
     {
         for (const auto &line : wins_stage)
         {
@@ -54,7 +57,6 @@ void XO::XOBot::MediumMode()
             auto countEmpty = 0;
             auto TargetIndex = -1;
 
-            // Check each position
             for (auto index : line)
             {
                 auto now = game->getPositionAt(index);
@@ -68,7 +70,7 @@ void XO::XOBot::MediumMode()
                 }
             }
 
-            // Critical Move
+            //* Found a line with 2 target icons and 1 empty slot
             if (countTarget == 2 && countEmpty == 1)
             {
                 return TargetIndex;
@@ -80,15 +82,16 @@ void XO::XOBot::MediumMode()
     };
 
     auto change = std::rand() % 100;
+
+    // 50% Chance to play smartly
     if (change > 50)
     {
-        // 50% Chance to play smartly
         auto winMove = findWinningSpot(AI);
         if (winMove != -1)
         {
             // Win
             game->placeMove(winMove, AI);
-            std::cout << "AI Medium Mode attacks at " << winMove + 1 << std::endl;
+            std::println("AI Medium Mode attacks at {}", winMove + 1);
             return;
         }
 
@@ -97,12 +100,12 @@ void XO::XOBot::MediumMode()
         {
             // Block
             game->placeMove(blockMove, AI);
-            std::cout << "AI Medium Mode blocks at " << blockMove + 1 << std::endl;
+            std::println("AI Medium Mode attacks at {}", winMove + 1);
             return;
         }
     }
 
-    // play random or no critical move
+    //* No strategic move found -> fallback to random
     EasyMode();
 }
 
@@ -132,15 +135,20 @@ bool XO::XOBot::HardMode::isBoardFull(const std::array<char, 9> &board) const
     return true;
 }
 
-// The Minimax Recursive Function
-// isMaximizing = true  -> AI's turn (try to get highest score)
-// isMaximizing = false -> Player's turn (assume Player plays optimally to get lowest score)
+//** The Minimax Recursive Function
+//* isMaximizing = true  -> AI's turn (try to get highest score)
+//* isMaximizing = false -> Player's turn (assume Player plays optimally to get lowest score)
+/*
+    TODO: Implement Alpha-Beta pruning to optimize Minimax performance
+*/
 int XO::XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
 {
     if (isWinner(board, AI))
         return 10;
+
     if (isWinner(board, PLAYER))
         return -10;
+
     if (isBoardFull(board))
         return 0;
 
@@ -173,13 +181,13 @@ int XO::XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
         return bestScore;
     }
 }
-int XO::XOBot::HardMode::findBestMove()
+unsigned long long int XO::XOBot::HardMode::findBestMove()
 {
-    std::array<char, 9> TestBoard = game->getMap();
+    std::array<char, 9ull> TestBoard = game->getMap();
     auto bestScore = -1000;
     auto move = -1;
 
-    std::cout << "--- AI Hard mode Thinking ---" << std::endl;
+    std::println("--- AI Hard mode Thinking ---");
 
     for (auto i{0uz}; i < TestBoard.size(); i++)
     {
@@ -189,8 +197,8 @@ int XO::XOBot::HardMode::findBestMove()
             int score = minimax(TestBoard, false);
             TestBoard.at(i) = ' ';
 
-            // Debug output
-            std::cout << "Slot " << i + 1 << " : Score = " << score << std::endl;
+            //* Output evaluation score for each possible move (debug)
+            std::println(std::clog, "Slot {} : Score = {}", i + 1, score);
 
             if (score > bestScore)
             {
@@ -200,8 +208,8 @@ int XO::XOBot::HardMode::findBestMove()
         }
     }
 
-    std::cout << ">>> AI Chose Slot: " << move + 1 << " (Best Score: " << bestScore << ")" << std::endl;
-    std::cout << "-------------------" << std::endl;
+    std::println(">>> AI Chose Slot: {} (Best Score: {})", move + 1, bestScore);
+    std::println("-------------------");
 
     return move;
 }

@@ -1,4 +1,3 @@
-#include <iostream>
 #include "TicTacToe.h"
 #include "Utils.h"
 #include <ctime>
@@ -8,7 +7,9 @@
 int main()
 {
     std::srand(std::time(0));
+
     XO::TicTacToe xo;
     xo.runGame();
+
     return 0;
 }
