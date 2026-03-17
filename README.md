@@ -139,4 +139,5 @@ This project demostrates my understanding of basic AI algorithms and OOP.
 
 ## License
 
-This project is open-source and available under the MIT License.
+This project is released into the public domain under The Unlicense.  
+See the LICENSE file for details.
