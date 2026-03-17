@@ -1,5 +1,6 @@
 #include "TicTacToe.h"
 #include "Utils.h"
+#include <print>
 #include <iostream>
 #include <limits>
 #include <array>
@@ -12,28 +13,30 @@ XO::TicTacToe::TicTacToe() : mode(random_model()), playerIcon('X'), computerIcon
     ptrBot = std::make_unique<XOBot>(this);
 }
 
-XO::TicTacToe::~TicTacToe() { std::cout << "Tic Tac Toe has Delate successfully" << std::endl; }
+XO::TicTacToe::~TicTacToe() { std::println(std::clog, "Tic Tac Toe has Delate successfully"); }
 
 XO::Difficulty XO::TicTacToe::random_model()
 {
     auto random = std::rand() % 3;
+
     return static_cast<Difficulty>(random);
 }
 
-// Main Game Loop
+// Main game loop: handles multiple matches until user exits
 void XO::TicTacToe::runGame()
 {
     while (true) // Main loop
     {
         std::system("cls");
+
         mode = random_model();
         resetBoard();
         running = true;
 
-        auto count = 0u;
+        auto count = 0ull;
         auto status = ' ';
 
-        // match loop
+        // Single match loop (runs until win/tie)
         while (running)
         {
             drawBoard();
@@ -44,6 +47,7 @@ void XO::TicTacToe::runGame()
             if (count >= 3)
             {
                 status = checkGameStatus();
+
                 if (status != ' ')
                 {
                     running = false;
@@ -57,6 +61,7 @@ void XO::TicTacToe::runGame()
             if (count >= 3)
             {
                 status = checkGameStatus();
+
                 if (status != ' ')
                 {
                     running = false;
@@ -64,9 +69,11 @@ void XO::TicTacToe::runGame()
                 }
             }
         }
+
         updateScore(status);
         drawBoard();
-        Show_status(status);
+        ShowStatus(status);
+
         if (!PlayAgain())
             break;
     }
@@ -74,40 +81,46 @@ void XO::TicTacToe::runGame()
 
 void XO::TicTacToe::displayScore()
 {
-    std::cout << Utils::Color::GREEN << "Player (X): " << Utils::Color::RESET << PlayerWins << Utils::Color::MAGENTA << "  |  Computer (O): " << Utils::Color::RESET << ComputerWins << Utils::Color::YELLOW << " | Ties: " << Utils::Color::RESET << Ties << std::endl;
-    std::cout << Utils::Color::CYAN << " | Mode: ";
+    std::print("{}Player (X): {}{}{}  |  {}Computer (O): {}{}{} | {}Ties: {}{}\n",
+               Utils::Color::GREEN, Utils::Color::RESET, PlayerWins,
+               Utils::Color::MAGENTA, Utils::Color::RESET, ComputerWins,
+               Utils::Color::YELLOW, Utils::Color::RESET, Ties);
+
+    std::print("{} | Mode: ", Utils::Color::CYAN);
     switch (mode)
     {
     case Difficulty::Easy:
-        std::cout << "Easy";
+        std::print("Easy");
         break;
+
     case Difficulty::Medium:
-        std::cout << "Medium";
+        std::print("Medium");
         break;
+
     case Difficulty::Hard:
-        std::cout << "Hard";
+        std::print("Hard");
         break;
     }
-    std::cout << Utils::Color::RESET << std::endl;
+
+    std::println("{}", Utils::Color::RESET);
 }
 
 void XO::TicTacToe::drawBoard()
 {
-    std::cout << std::endl;
+    std::println("");
+
     displayScore();
-    std::cout << "==== XO XO XO====";
-    std::cout << std::endl;
-    std::cout << "     |     |     " << std::endl;
-    std::cout << "  " << spaces.at(0) << "  |  " << spaces.at(1) << "  |  " << spaces.at(2) << "  " << std::endl;
-    std::cout << "_____|_____|_____" << std::endl;
-    std::cout << "     |     |     " << std::endl;
-    std::cout << "  " << spaces.at(3) << "  |  " << spaces.at(4) << "  |  " << spaces.at(5) << "  " << std::endl;
-    std::cout << "_____|_____|_____" << std::endl;
-    std::cout << "     |     |     " << std::endl;
-    std::cout << "  " << spaces.at(6) << "  |  " << spaces.at(7) << "  |  " << spaces.at(8) << "  " << std::endl;
-    std::cout << "     |     |     " << std::endl;
-    std::cout << "==== XO XO XO====";
-    std::cout << std::endl;
+    std::println("==== XO XO XO====");
+    std::println("     |     |     ");
+    std::println("  {}  |  {}  |  {}  ", spaces.at(0ull), spaces.at(1ull), spaces.at(2ull));
+    std::println("_____|_____|_____");
+    std::println("     |     |     ");
+    std::println("  {}  |  {}  |  {}  ", spaces.at(3ull), spaces.at(4ull), spaces.at(5ull));
+    std::println("_____|_____|_____");
+    std::println("     |     |     ");
+    std::println("  {}  |  {}  |  {}  ", spaces.at(6ull), spaces.at(7ull), spaces.at(8ull));
+    std::println("     |     |     ");
+    std::println("==== XO XO XO====");
 }
 
 void XO::TicTacToe::resetBoard()
@@ -130,28 +143,28 @@ char XO::TicTacToe::checkGameStatus()
     };
     */
     // check rows and columns
-    for (auto i = 0u; i < 3u; i++)
+    for (auto i = 0ull; i < 3ull; i++)
     {
         auto rStart = i * 3u;
 
         // Checks [0,1,2], [3,4,5], [6,7,8]
-        if (spaces.at(rStart) != ' ' && spaces.at(rStart) == spaces.at(rStart + 1) && spaces[rStart] == spaces.at(rStart + 2))
+        if (spaces.at(rStart) != ' ' && spaces.at(rStart) == spaces.at(rStart + 1ull) && spaces[rStart] == spaces.at(rStart + 2ull))
             return spaces.at(rStart);
 
         // Checks [0,3,6], [1,4,7], [2,5,8]
-        if (spaces.at(i) != ' ' && spaces.at(i) == spaces.at(i + 3) && spaces.at(i) == spaces.at(i + 6))
+        if (spaces.at(i) != ' ' && spaces.at(i) == spaces.at(i + 3ull) && spaces.at(i) == spaces.at(i + 6ull))
             return spaces.at(i);
     }
 
     // [0,4,8]
-    if (spaces.at(0) != ' ' && spaces.at(0) == spaces.at(4) && spaces.at(4) == spaces.at(8))
-        return spaces.at(0);
+    if (spaces.at(0ull) != ' ' && spaces.at(0ull) == spaces.at(4ull) && spaces.at(4ull) == spaces.at(8ull))
+        return spaces.at(0ull);
 
     //[2,4,6]
-    if (spaces.at(2) != ' ' && spaces.at(2) == spaces.at(4) && spaces.at(4) == spaces.at(6))
-        return spaces.at(2);
+    if (spaces.at(2ull) != ' ' && spaces.at(2ull) == spaces.at(4ull) && spaces.at(4ull) == spaces.at(6ull))
+        return spaces.at(2ull);
 
-    // empty spaces left
+    // Check if there are still empty spaces (game not finished)
     for (const auto &i : spaces)
         if (i == ' ')
             return ' ';
@@ -163,20 +176,25 @@ void XO::TicTacToe::updateScore(char status)
 {
     if (status == playerIcon)
         PlayerWins++;
+
     else if (status == computerIcon)
         ComputerWins++;
+
     else if (status == 'T')
         Ties++;
 }
 
 bool XO::TicTacToe::PlayAgain()
 {
-    char playagain;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear buffer
+
+    char playagain;
+
     do
     {
-        std::cout << "Play again?(y/n): ";
+        std::print("Play again?(y/n): ");
         std::cin >> playagain;
+
         playagain = std::tolower(playagain);
 
     } while (playagain != 'y' && playagain != 'n');
@@ -184,12 +202,14 @@ bool XO::TicTacToe::PlayAgain()
     return (playagain == 'y');
 }
 
-void XO::TicTacToe::Show_status(char status)
+void XO::TicTacToe::ShowStatus(char status)
 {
     if (status == playerIcon)
-        std::cout << Utils::Color::GREEN << "YOU WIN!" << Utils::Color::RESET << std::endl;
+        std::println("{}YOU WIN!{}", Utils::Color::GREEN, Utils::Color::RESET);
+
     else if (status == computerIcon)
-        std::cout << Utils::Color::RED << "YOU LOSE!" << Utils::Color::RESET << std::endl;
+        std::println("{}YOU LOSE!{}", Utils::Color::RED, Utils::Color::RESET);
+
     else if (status == 'T') // Tie
-        std::cout << Utils::Color::YELLOW << "IT'S A TIE!" << Utils::Color::RESET << std::endl;
+        std::println("{}IT'S A TIE!{}", Utils::Color::YELLOW, Utils::Color::RESET);
 }

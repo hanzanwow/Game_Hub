@@ -27,14 +27,14 @@ namespace XO
         std::unique_ptr<XOBot> ptrBot;
 
         Difficulty mode;
-        std::array<char, 9> spaces = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+        std::array<char, 9ull> spaces = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
         const char playerIcon;
         const char computerIcon;
         bool running;
 
-        int PlayerWins;
-        int ComputerWins;
-        int Ties;
+        unsigned int PlayerWins;
+        unsigned int ComputerWins;
+        unsigned int Ties;
 
         Difficulty random_model();
         void drawBoard();
@@ -43,7 +43,7 @@ namespace XO
         bool PlayAgain();
         void updateScore(char status);
         void displayScore();
-        void Show_status(char status);
+        void ShowStatus(char status);
 
     public:
         /*
@@ -54,13 +54,14 @@ namespace XO
         */
 
         // place a move
-        bool placeMove(int index, char icon)
+        bool placeMove(unsigned long long int index, char icon)
         {
-            if (index >= 0 && index < 9 && spaces[index] == ' ')
+            if (index >= 0ull && index < 9ull && spaces[index] == ' ')
             {
                 spaces[index] = icon;
                 return true;
             }
+
             return false;
         }
 

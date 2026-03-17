@@ -13,29 +13,40 @@ namespace XO
         char PLAYER;
         char AI;
 
-        // Random moves
+        //* EASY MODE:
+        // - Random moves only
+        // - No strategy
         void EasyMode();
 
-        // Block/Win logic with some random
+        //* MEDIUM MODE:
+        // - Attempts to win
+        // - Block opponent
+        // - Otherwise falls back to random (persent change 50%)
         void MediumMode();
 
-        // Nested class to encapsulate complex Hard Mode logic (Minimax)
+        //* HARD MODE AI:
+        // - Uses Minimax algorithm
+        // - Evaluates all possible board moves
+        // - Chooses optimal move
         class HardMode
         {
         private:
             TicTacToe *game;
+
             char AI;
             char PLAYER;
+
             bool isWinner(const std::array<char, 9> &board, const char &player) const;
             bool isBoardFull(const std::array<char, 9> &board) const;
 
-            // Minimax algorithm
-            // Returns a score: +10 (AI wins), -10 (Player wins), 0 (Tie)
-            int minimax(std::array<char, 9> &board, bool isMaximizing);
-            int findBestMove();
+            //* Minimax algorithm (recursive).
+            //  Evaluates board states and returns a score:
+            //* +10 (AI win), -10 (Player win), 0 (Tie)
+            int minimax(std::array<char, 9ull> &board, bool isMaximizing);
+            unsigned long long int findBestMove();
 
         public:
-            HardMode(TicTacToe *API, char ai, char human) : game(API), AI(ai), PLAYER(human) {}
+            HardMode(TicTacToe *API, char aiChar, char humanChar) : game(API), AI(aiChar), PLAYER(humanChar) {}
             ~HardMode() = default;
             void Hard_Move();
         };
