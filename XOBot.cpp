@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <array>
 
+XO::XOBot::XOBot(TicTacToe *API) : game(API), PLAYER(API->getPlayerIcon()), AI(API->getComputerIcon()), hard(API, AI, PLAYER) {}
+
 void XO::XOBot::Move()
 {
     switch (game->getMode())
@@ -25,17 +27,16 @@ void XO::XOBot::Move()
 }
 void XO::XOBot::EasyMode()
 {
-    auto number = 0ull;
     while (true)
     {
-        number = std::rand() % 9;
+        auto number = std::rand() % 9;
         if (game->placeMove(number, game->getComputerIcon()))
             break;
     }
 }
 void XO::XOBot::MediumMode()
 {
-    const std::array<std::array<int, 3>, 8> wins_stage =
+    const std::array<std::array<size_t, 3>, 8> wins_stage =
         {{
             {0, 1, 2}, // Row 1
             {3, 4, 5}, // Row 2
@@ -49,12 +50,12 @@ void XO::XOBot::MediumMode()
 
     //* Finds a winning or blocking move.
     //* Returns the index of the critical position, or -1 if none found.
-    auto findWinningSpot = [&](char targetIcon) -> unsigned long long int
+    auto findWinningSpot = [&](char targetIcon) -> int
     {
         for (const auto &line : wins_stage)
         {
-            auto countTarget = 0;
-            auto countEmpty = 0;
+            auto countTarget = 0u;
+            auto countEmpty = 0u;
             auto TargetIndex = -1;
 
             for (auto index : line)
@@ -81,28 +82,22 @@ void XO::XOBot::MediumMode()
         return -1;
     };
 
-    auto change = std::rand() % 100;
-
-    // 50% Chance to play smartly
-    if (change > 50)
+    auto winMove = findWinningSpot(AI);
+    if (winMove != -1)
     {
-        auto winMove = findWinningSpot(AI);
-        if (winMove != -1)
-        {
-            // Win
-            game->placeMove(winMove, AI);
-            std::println("AI Medium Mode attacks at {}", winMove + 1);
-            return;
-        }
+        // Win
+        game->placeMove(winMove, AI);
+        std::println("\n {}""AI Medium Mode attacks at"" {}{}",Utils::Color::BLUE, winMove + 1, Utils::Color::RESET);
+        return;
+    }
 
-        auto blockMove = findWinningSpot(PLAYER);
-        if (blockMove != -1)
-        {
-            // Block
-            game->placeMove(blockMove, AI);
-            std::println("AI Medium Mode attacks at {}", winMove + 1);
-            return;
-        }
+    auto blockMove = findWinningSpot(PLAYER);
+    if (blockMove != -1)
+    {
+        // Block
+        game->placeMove(blockMove, AI);
+        std::println("\n {}""AI Medium Mode block at"" {}{}",Utils::Color::BLUE, blockMove + 1, Utils::Color::RESET);
+        return;
     }
 
     //* No strategic move found -> fallback to random
@@ -111,7 +106,7 @@ void XO::XOBot::MediumMode()
 
 bool XO::XOBot::HardMode::isWinner(const std::array<char, 9> &board, const char &player) const
 {
-    const std::array<std::array<int, 3>, 8> wins_stage =
+    const std::array<std::array<size_t, 3>, 8> wins_stage =
         {{
             {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // Rows
             {0, 3, 6},

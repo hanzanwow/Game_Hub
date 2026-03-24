@@ -6,7 +6,7 @@
 #include <array>
 #include <memory>
 
-XO::TicTacToe::TicTacToe() : mode(random_model()), playerIcon('X'), computerIcon('O'), running(true), PlayerWins(0u), ComputerWins(0u), Ties(0u)
+XO::TicTacToe::TicTacToe() : mode(random_model())
 {
     // Create player and bot objects, passing the current game instance
     ptrPlayer = std::make_unique<player>(this);
@@ -33,7 +33,7 @@ void XO::TicTacToe::runGame()
         resetBoard();
         running = true;
 
-        auto count = 0ull;
+        auto count = 0u;
         auto status = ' ';
 
         // Single match loop (runs until win/tie)
@@ -81,10 +81,10 @@ void XO::TicTacToe::runGame()
 
 void XO::TicTacToe::displayScore()
 {
-    std::print("{}Player (X): {}{}{}  |  {}Computer (O): {}{}{} | {}Ties: {}{}\n",
-               Utils::Color::GREEN, Utils::Color::RESET, PlayerWins,
-               Utils::Color::MAGENTA, Utils::Color::RESET, ComputerWins,
-               Utils::Color::YELLOW, Utils::Color::RESET, Ties);
+    std::println("{}Player (X): {}{}  |  {}Computer (O): {}{} | {}Ties: {}{}",
+                 Utils::Color::GREEN, Utils::Color::RESET, PlayerWins,
+                 Utils::Color::MAGENTA, Utils::Color::RESET, ComputerWins,
+                 Utils::Color::YELLOW, Utils::Color::RESET, Ties);
 
     std::print("{} | Mode: ", Utils::Color::CYAN);
     switch (mode)
@@ -143,26 +143,26 @@ char XO::TicTacToe::checkGameStatus()
     };
     */
     // check rows and columns
-    for (auto i = 0ull; i < 3ull; i++)
+    for (auto i{0uz}; i < 3; i++)
     {
-        auto rStart = i * 3u;
+        auto rStart = i * 3;
 
         // Checks [0,1,2], [3,4,5], [6,7,8]
-        if (spaces.at(rStart) != ' ' && spaces.at(rStart) == spaces.at(rStart + 1ull) && spaces[rStart] == spaces.at(rStart + 2ull))
+        if (spaces.at(rStart) != ' ' && spaces.at(rStart) == spaces.at(rStart + 1) && spaces[rStart] == spaces.at(rStart + 2))
             return spaces.at(rStart);
 
         // Checks [0,3,6], [1,4,7], [2,5,8]
-        if (spaces.at(i) != ' ' && spaces.at(i) == spaces.at(i + 3ull) && spaces.at(i) == spaces.at(i + 6ull))
+        if (spaces.at(i) != ' ' && spaces.at(i) == spaces.at(i + 3) && spaces.at(i) == spaces.at(i + 6))
             return spaces.at(i);
     }
 
     // [0,4,8]
-    if (spaces.at(0ull) != ' ' && spaces.at(0ull) == spaces.at(4ull) && spaces.at(4ull) == spaces.at(8ull))
-        return spaces.at(0ull);
+    if (spaces.at(0) != ' ' && spaces.at(0) == spaces.at(4) && spaces.at(4) == spaces.at(8))
+        return spaces.at(0);
 
     //[2,4,6]
-    if (spaces.at(2ull) != ' ' && spaces.at(2ull) == spaces.at(4ull) && spaces.at(4ull) == spaces.at(6ull))
-        return spaces.at(2ull);
+    if (spaces.at(2) != ' ' && spaces.at(2) == spaces.at(4) && spaces.at(4) == spaces.at(6))
+        return spaces.at(2);
 
     // Check if there are still empty spaces (game not finished)
     for (const auto &i : spaces)

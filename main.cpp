@@ -1,8 +1,7 @@
 #include "TicTacToe.h"
-#include "Utils.h"
 #include <ctime>
 
-// Run code -> Terminal -> g++ *.cpp -o gamehub -std=c++23 -Wall -Wextra -> Enter
+// Run code -> Terminal -> g++ *.cpp -o gamehub -std=c++23 -Wall -Wextra -lstdc++exp -> Enter
 // ./gamehub
 int main()
 {

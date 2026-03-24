@@ -53,7 +53,7 @@ namespace XO
 
     public:
         HardMode hard;
-        XOBot(TicTacToe *API) : game(API), PLAYER(API->getPlayerIcon()), AI(API->getComputerIcon()), hard(API, AI, PLAYER) {}
+        XOBot(TicTacToe *API);
         void Move();
     };
 }
