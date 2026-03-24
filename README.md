@@ -49,7 +49,7 @@ A terminal-based Tic Tac Toe game implemented in modern C++ with multiple AI dif
 ### Compile
 
 ```bash
-g++ *.cpp -o gamehub -std=c++23 -Wall -Wextra
+g++ *.cpp -o gamehub -std=c++23 -Wall -Wextra -lstdc++exp
 ```
 
 ### Run
@@ -103,10 +103,9 @@ Enter number (1-9) to place your 'X':
 
 ## Future Improvements
 
-* Alpha-Beta pruning (performance optimization)
-* GUI version (SFML / Qt)
-* Multiplayer (network play)
-* Machine Learning-based AI
+- [ ] Alpha-Beta pruning (performance optimization)
+- [ ] GUI version using SFML
+- [ ] Test function
 
 ---
 
