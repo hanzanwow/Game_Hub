@@ -39,10 +39,19 @@ namespace XO
             bool isWinner(const std::array<char, 9> &board, const char &player) const;
             bool isBoardFull(const std::array<char, 9> &board) const;
 
-            //* Minimax algorithm (recursive).
-            //  Evaluates board states and returns a score:
-            //* +10 (AI win), -10 (Player win), 0 (Tie)
-            int minimax(std::array<char, 9ull> &board, bool isMaximizing);
+            //* Position bonus (terminal-only tie-breaker).
+            //  Sum of weights of AI cells minus weights of Player cells.
+            //  Each cell's weight = number of winning lines through it: center=4, corners=3, edges=2.
+            int positionBonus(const std::array<char, 9> &board) const;
+
+            //* Minimax algorithm (recursive) with Alpha-Beta pruning.
+            //  Returns a layered terminal score: outcome dominates, then depth, then position.
+            //* AI win:     (10 - depth) * 100 + positionBonus  -> faster wins score higher
+            //* Player win: (depth - 10) * 100 + positionBonus  -> slower losses score higher
+            //* Tie:        positionBonus                       -> ties broken by central control
+            //* alpha = best score the maximizer can guarantee so far
+            //* beta  = best score the minimizer can guarantee so far
+            int minimax(std::array<char, 9ull> &board, bool isMaximizing, int alpha, int beta, int depth);
             unsigned long long int findBestMove();
 
         public:
