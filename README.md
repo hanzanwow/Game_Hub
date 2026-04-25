@@ -103,8 +103,8 @@ Enter number (1-9) to place your 'X':
 
 ## Future Improvements
 
-- [ ] Alpha-Beta pruning (performance optimization)
-- [ ] GUI version using SFML
+- [x] Alpha-Beta pruning (performance optimization)
+~~- [ ] GUI version using SFML~~
 - [ ] Test function
 
 ---
