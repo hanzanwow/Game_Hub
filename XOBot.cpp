@@ -130,22 +130,38 @@ bool XO::XOBot::HardMode::isBoardFull(const std::array<char, 9> &board) const
     return true;
 }
 
-//** The Minimax Recursive Function
+int XO::XOBot::HardMode::positionBonus(const std::array<char, 9> &board) const
+{
+    //* Weight per cell = number of winning lines passing through it.
+    //  Center (4) > Corners (3) > Edges (2). Range bounded well below the depth step (100),
+    //  so this bonus only ever breaks ties between equally-deep outcomes.
+    static constexpr std::array<int, 9> weights = {3, 2, 3, 2, 4, 2, 3, 2, 3};
+    auto bonus = 0;
+    for (auto i{0uz}; i < board.size(); i++)
+    {
+        if (board.at(i) == AI)
+            bonus += weights.at(i);
+        else if (board.at(i) == PLAYER)
+            bonus -= weights.at(i);
+    }
+    return bonus;
+}
+
+//** The Minimax Recursive Function (Alpha-Beta + depth + position-weighted terminal scoring)
 //* isMaximizing = true  -> AI's turn (try to get highest score)
 //* isMaximizing = false -> Player's turn (assume Player plays optimally to get lowest score)
-/*
-    TODO: Implement Alpha-Beta pruning to optimize Minimax performance
-*/
-int XO::XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
+//* depth = plies from the root; the *100 step keeps outcome+depth dominant over positionBonus.
+//* Pruning: stop exploring a branch once beta <= alpha; selection still matches plain Minimax.
+int XO::XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing, int alpha, int beta, int depth)
 {
     if (isWinner(board, AI))
-        return 10;
+        return (10 - depth) * 100 + positionBonus(board);
 
     if (isWinner(board, PLAYER))
-        return -10;
+        return (depth - 10) * 100 + positionBonus(board);
 
     if (isBoardFull(board))
-        return 0;
+        return positionBonus(board);
 
     if (isMaximizing)
     {
@@ -154,9 +170,13 @@ int XO::XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
         {
             if (board.at(i) == ' ')
             {
-                board.at(i) = AI;                                       // Try to Make move
-                bestScore = std::max(bestScore, minimax(board, false)); // Recurse
-                board.at(i) = ' ';                                      // Undo
+                board.at(i) = AI;                                                                  // Try to Make move
+                bestScore = std::max(bestScore, minimax(board, false, alpha, beta, depth + 1));    // Recurse
+                board.at(i) = ' ';                                                                 // Undo
+
+                alpha = std::max(alpha, bestScore);
+                if (beta <= alpha)
+                    break; // Beta cutoff: minimizer would avoid this branch
             }
         }
         return bestScore;
@@ -169,8 +189,12 @@ int XO::XOBot::HardMode::minimax(std::array<char, 9> &board, bool isMaximizing)
             if (board.at(i) == ' ')
             {
                 board.at(i) = PLAYER;
-                bestScore = std::min(bestScore, minimax(board, true));
+                bestScore = std::min(bestScore, minimax(board, true, alpha, beta, depth + 1));
                 board.at(i) = ' ';
+
+                beta = std::min(beta, bestScore);
+                if (beta <= alpha)
+                    break; // Alpha cutoff: maximizer would avoid this branch
             }
         }
         return bestScore;
@@ -189,7 +213,7 @@ unsigned long long int XO::XOBot::HardMode::findBestMove()
         if (TestBoard.at(i) == ' ')
         {
             TestBoard.at(i) = AI;
-            int score = minimax(TestBoard, false);
+            int score = minimax(TestBoard, false, -10000, 10000, 1);
             TestBoard.at(i) = ' ';
 
             //* Output evaluation score for each possible move (debug)
