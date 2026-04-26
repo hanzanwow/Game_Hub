@@ -105,7 +105,16 @@ Enter number (1-9) to place your 'X':
 
 - [x] Alpha-Beta pruning (performance optimization)
 ~~- [ ] GUI version using SFML~~
-- [ ] Test function
+- [ ] Test function $1/3$
+  - [ ] Easy mode
+  - [ ] Medium mode
+  - [x] Hard mode
+- [x] Execution time measurement with `<chrono>` (HardMode `findBestMove`)
+  - Standalone benchmark: `execution-time.cpp`.
+  - Two `HardMode` bots (X vs O) play a full game; every `findBestMove()` call is timed with `std::chrono::steady_clock` (`startTime` / `endTime` / `elapsedTime` in nanoseconds).
+  - The match is repeated 20 times — perfect-play vs perfect-play is deterministic, so the move sequence is identical across games and each move position gets 20 timing samples.
+  - Reports per-move-position avg / min / max plus an overall average across all 180 calls.
+  - Build: `g++ execution-time.cpp XOBot.cpp TicTacToe.cpp Player.cpp -o execution-time -std=c++23 -Wall -Wextra -lstdc++exp`
 
 ---
 
