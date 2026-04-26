@@ -3,6 +3,8 @@
 
 #include <array>
 
+struct HardModeProbe; //* fwd decl for test hook (test.cpp)
+
 namespace XO
 {
     class TicTacToe;
@@ -24,6 +26,7 @@ namespace XO
         // - Otherwise falls back to random (persent change 50%)
         void MediumMode();
 
+    public:
         //* HARD MODE AI:
         // - Uses Minimax algorithm
         // - Evaluates all possible board moves
@@ -31,6 +34,8 @@ namespace XO
         class HardMode
         {
         private:
+            friend struct ::HardModeProbe; //* test hook (test.cpp)
+
             TicTacToe *game;
 
             char AI;
